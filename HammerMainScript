@@ -1,0 +1,84 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+
+public class HammerMan : MonoBehaviour
+{
+    Rigidbody2D rb2d;
+    Animator anim;
+    float Vertical;
+    float Horizontal;
+    public float speed;
+    bool rightstop;
+    bool leftstop;
+   
+    void Start()
+    {
+        // Get Components
+
+        rb2d = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+
+    }
+
+    
+    void Update()
+    {
+        
+        // Horizontal & Vertical Input
+
+       
+         Vertical = Input.GetAxisRaw("Vertical");
+         Horizontal = Input.GetAxisRaw("Horizontal");
+        
+        // Animations Script Controller
+
+        if (Horizontal > 0)
+        {
+            anim.SetBool("IsRight", true);
+            anim.SetBool("IsLeft", false);
+           // Get the last postion (Right/Left)
+            rightstop = true;
+            leftstop = false;
+        }
+        if (Horizontal < 0)
+        {
+            anim.SetBool("IsRight", false);
+            anim.SetBool("IsLeft", true);
+            rightstop = false;
+            leftstop = true;
+        }
+       if (Horizontal == 0)
+        {
+            if (rightstop)
+            {
+                anim.SetBool("IsRight", false);
+                if (Vertical > 0 || Vertical < 0)
+                {
+                    anim.SetBool("IsRight", true);
+                }
+
+            }
+            if (leftstop)
+            {
+                anim.SetBool("IsLeft", false);
+                if (Vertical > 0 || Vertical < 0)
+                {
+                    anim.SetBool("IsLeft", true);
+                }
+            }
+        }
+     
+    }
+    private void FixedUpdate()
+    {
+        // Rigidbody2D Movements
+
+        Vector2 postion = rb2d.position;
+        postion.x = postion.x + speed * Horizontal * Time.fixedDeltaTime;
+        postion.y = postion.y + speed * Vertical * Time.fixedDeltaTime;
+        rb2d.MovePosition(postion);
+
+    }
+}
